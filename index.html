@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<title>TwitterのStatusID(ツイートID)から投稿日時(ミリ秒まで)を取得するツール</title>
+</head>
+
+<p>ご自由にお使いください。</p>
+<div><input type="text" placeholder="URLまたはStatusIDを入力" id="statusIdBox" style="width: 35em;"><input type="button" value="計算" id="calcButton"></div>
+<div><input type="text" placeholder="計算結果" id="outputBox" style="width: 13em;"></div>
+<p>※ 2010年11月以前のツイートでは正常に動作しません</p>
+
+<script type="text/javascript">
+	
+  var idBox = document.getElementById('statusIdBox');
+  var calcButton = document.getElementById('calcButton');
+  var outputBox = document.getElementById('outputBox');
+  if (!(idBox == null || calcButton == null || outputBox == null)) {
+  var calcFunc = (function() {
+                    var id = idBox.value;
+                    if(id.startsWith('https://twitter.com/')) {
+                      id = id.replace(/https\:\/\/(twitter|twttr)\.com\/.+\/status\//, '');
+                      var questionIndex = id.indexOf('?');
+                      if(questionIndex != -1) {
+                        id = id.substring(0, questionIndex);
+                      }
+                      var slashIndex = id.indexOf('/');
+                      if(slashIndex != -1) {
+                        id = id.substring(0, slashIndex);
+                      }
+                    }
+                    var intId = parseInt(id, 10);
+                    //var unixTime = (intId &gt;&gt;&gt; 22) + 1288834974657;
+                    var unixTime = parseInt(intId / Math.pow(2, 22)) + 1288834974657;
+                    var tweetDate = new Date(unixTime);
+                    
+                    var year = ("000" + tweetDate.getFullYear()).slice(-4);
+                    var month = ("0" + (tweetDate.getMonth() + 1)).slice(-2);
+                    var date = ("0" + tweetDate.getDate()).slice(-2);
+                    var hours = ("0" + tweetDate.getHours()).slice(-2);
+                    var minutes = ("0" + tweetDate.getMinutes()).slice(-2);
+                    var seconds = ("0" + tweetDate.getSeconds()).slice(-2);
+                    var millis = ("00" + tweetDate.getMilliseconds()).slice(-3);
+                    
+                    outputBox.value = year + "/" + month + "/" + date + " " + hours + ":" + minutes + ":" + seconds + "." + millis;
+                  }
+  );
+  
+  calcButton.addEventListener('click', calcFunc, false);
+  }
+</script>
+<p><a href="http://blog.qpwakaba.xyz/post/158254326985/">ブログ記事</a></p>
+</html>
